@@ -1,4 +1,4 @@
-from retriever import Retriever
+from REPLUG_RAG4Coding.retriever import Retriever
 import numpy as np
 import os
 from typing import Optional

@@ -1,0 +1,6 @@
+LSR_finetune/psgs_w100.tsv
+LSR_finetune/embeddings_50k_miniLM
+LSR_finetune/output_finetuned_retriever
+LSR_finetune/index_meta.faiss
+LSR_finetune/index.faiss
+LSR_finetune/__pycache__

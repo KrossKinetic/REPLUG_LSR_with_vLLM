@@ -1,4 +1,4 @@
-from retriever import Retriever
+from REPLUG_RAG4Coding.retriever import Retriever
 from datasets import load_dataset
 from tqdm import tqdm
 from IPython import embed

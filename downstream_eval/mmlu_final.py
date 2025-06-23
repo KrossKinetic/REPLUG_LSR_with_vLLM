@@ -12,7 +12,7 @@ import time
 from time import sleep
 from collections import defaultdict
 import random
-from retriever import Retriever
+from REPLUG_RAG4Coding.retriever import Retriever
 import openai
 from tqdm import tqdm
 from utils import *

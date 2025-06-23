@@ -24,7 +24,7 @@ import sys
 script_dir = os.path.dirname(os.path.realpath(__file__))
 repo_root = os.path.join(script_dir, "..")
 sys.path.append(repo_root)
-from retriever import Retriever
+from REPLUG_RAG4Coding.retriever import Retriever
 from downstream_eval.argument import add_retriever_args
 
 
