@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--n_docs', type=int, default=10, help="Number of documents to retrieve per query.")
     parser.add_argument("--save_or_load_index", action='store_true', help='If enabled, save index and load index if it exists')
     parser.add_argument('--cache_dict', type=str, default="cache", help="Path to a cache file for retrieval results.")
-    parser.add_argument('--data', type=str, default=None, help="Legacy argument for specifying training data.")
+    parser.add_argument('--data', type=str, required=True, help="Path to the corpus for generating training queries (.tsv, .jsonl, etc).")
     parser.add_argument('--do_retrieval', type=int, default=1)
     
     # --- FIX: Added ALL missing arguments for the Retriever class ---
@@ -106,7 +106,7 @@ def main():
     model.optimizer = optimizer
     
     # --- Data Loading and Training Loop ---
-    text_data = load_text_from_local_corpus(args.passages)
+    text_data = load_text_from_local_corpus(args.data)
 
     print(f"Starting LSR fine-tuning for {len(text_data)} documents...")
 

@@ -5,7 +5,7 @@ Further tests need to be conducted to see if this modified script yields similar
 
 ## LSR finetuning:
 
-### Download Dataset and reformat it
+### Download Test Retriever Dataset and reformat it
 ```
 python3 dataset_downloader_formatter.py
 ```
@@ -31,6 +31,7 @@ python run_replug_lsr.py \
     --model_config_path "local_vllm_config.json" \
     --passages "python-github-code.csv" \
     --passages_embeddings "embeddings/passages_00" \
+    --data "python-github-code-data.csv" \
     --output_dir "output_finetuned_retriever" \
     --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
     --projection_size 384 \

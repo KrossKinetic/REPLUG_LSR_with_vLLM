@@ -1,4 +1,5 @@
 embeddings
 __pycache__
 python-github-code.csv
+python-github-code-data.csv
 output_finetuned_retriever
