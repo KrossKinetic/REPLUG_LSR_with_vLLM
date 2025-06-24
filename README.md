@@ -12,18 +12,17 @@ The key modifications include:
 
 * A CUDA-enabled GPU is required.
 * Python 3.10
-* [Poetry](https://python-poetry.org/) for dependency management.
+* Conda for dependency management.
 * [vLLM](https://github.com/vllm-project/vllm) for serving the local LLM.
 
 ## Setup & Training Workflow
 
 ### 1. Initial Setup
 
-First, install all the required Python packages using Poetry. It is recommended to use a virtual environment.
+First, install all the required Python packages using Conda and create a virtual environment.
 
 ```bash
-# Install dependencies from the lock file
-poetry install --no-root
+conda env create -f environment.yml
 ```
 
 ### 2. Data Preparation
