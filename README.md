@@ -1,57 +1,104 @@
-# REPLUG LSR: 
-This includes a modified implementation of **REPLUG: Retrieval-Augmented Black-Box Language Models** to try to get LSR Finetuning to work and finetune retrievers since the original implementation seems to be incomplete. The main Black Box LLM is built using vLLM to speed up the inference process by performing on-device inference instead of relying on cost expensive OpenAI server. The code was refactored to work well with code generation related tasks.
+# REPLUG LSR for Code: A Refactored Implementation
 
-Further tests need to be conducted to see if this modified script yields similar results. Work in progress... This is NOT a final, consumer ready script. It is working as far as I can tell but the code and parameters might have to be updated based on specific use cases and for your system.
+This repository contains a modified implementation of **REPLUG: Retrieval-Augmented Black-Box Language Models**. The primary goal of this refactoring was to create a stable, working version of the LSR (LM-Supervised Retrieval) fine-tuning process, as the original implementation appears to be incomplete.
 
-## LSR finetuning:
+The key modifications include:
 
-### Download Test Retriever Dataset and reformat it
+* **Local LLM Integration:** The main Black Box LLM is built using the **vLLM server**, allowing for high-performance, on-device inference instead of relying on the costly OpenAI API.
+* **Robust Driver Scripts:** New driver scripts were created to handle argument parsing and execute the training and evaluation pipelines correctly.
+* **Code-Focused Baseline:** The entire pipeline has been adapted and debugged to work with code-based datasets, making it suitable for creating RAG baselines for code generation tasks.
+
+## Prerequisites
+
+* A CUDA-enabled GPU is required.
+* Python 3.10
+* [Poetry](https://python-poetry.org/) for dependency management.
+* [vLLM](https://github.com/vllm-project/vllm) for serving the local LLM.
+
+## Setup & Training Workflow
+
+### 1. Initial Setup
+
+First, install all the required Python packages using Poetry. It is recommended to use a virtual environment.
+
+```bash
+# Install dependencies from the lock file
+poetry install --no-root
 ```
-python3 dataset_downloader_formatter.py
-```
 
-### Generating Embeddings
-```
+### 2. Data Preparation
+
+The LSR process requires two separate, non-overlapping datasets to prevent the model from learning "trivial retrieval" (i.e., just finding the exact source of its query).
+
+* **Retrieval Corpus (`--passages`):** The large knowledge base the retriever will search through.
+* **Training Query Corpus (`--data`):** A smaller, separate set of documents to generate training examples from.
+
+You will need to prepare these two `.csv` files. Each file should contain at least two columns: `id` and `text`.
+
+### 3. Generate Embeddings
+
+Create a searchable vector index from your **retrieval corpus**. This step uses the base retriever model (e.g., MiniLM) to convert your code documents into embeddings.
+
+* **Input:** Your retrieval corpus CSV file (e.g., `github_corpus.csv`).
+* **Output:** A directory containing the embeddings (e.g., `code_embeddings/`).
+
+```bash
+# This command uses the smaller and faster MiniLM model
 python generate_passage_embeddings.py \
     --model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
-    --passages "python-github-code.csv" \
-    --output_dir "embeddings" \
+    --passages "github_corpus.csv" \
+    --output_dir "code_embeddings" \
+    --projection_size 384 \
     --shard_id 0 \
     --num_shards 1
 ```
 
-### Running vLLM Server
-```
-vllm serve TinyLlama/TinyLlama-1.1B-Chat-v1.0 --dtype auto --api-key vllm
+**Note:** The `--projection_size` must match the dimension of your chosen retriever model (384 for `all-MiniLM-L6-v2`).
+
+### 4. Run the vLLM Server
+
+In a **separate terminal**, start the vLLM server to host your supervisor LLM. This server will act as the "teacher" for the retriever.
+
+```bash
+# This command serves the TinyLlama model with an OpenAI-compatible API
+python -m vllm.entrypoints.openai.api_server --model "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 ```
 
-### Running REPLUG LSR 
-```
-python run_replug_lsr.py \ 
-    --model "TinyLlama/TinyLlama-1.1B-Chat-v1.0" \  
-    --passages "python-github-code.csv" \    
-    --passages_embeddings "embeddings/passages_00" \    
-    --data "python-github-code-data.csv" \
-    --output_dir "output_finetuned_retriever" \    
-    --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \    
+### 5. Run REPLUG LSR Fine-Tuning
+
+With the data prepared and the vLLM server running, you can now start the main training process. This script will train the retriever model.
+
+* **Input:** Your two separate CSV files (`github_corpus.csv` and `training_queries.csv`), the generated embedding, and the name of the model being served by vLLM.
+* **Output:** Your new, fine-tuned retriever model saved to a directory.
+
+```bash
+python run_replug_lsr.py \
+    --model "TinyLlama/TinyLlama-1.1B-Chat-v1.0" \
+    --passages "github_corpus.csv" \
+    --passages_embeddings "code_embeddings/passages_00" \
+    --data "training_queries.csv" \
+    --output_dir "output_finetuned_retriever" \
+    --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
     --projection_size 384 \
-    --learning_rate 2e-5 \  
-    --per_gpu_batch_size 4 \     
+    --learning_rate 2e-5 \
+    --per_gpu_batch_size 4 \
     --context_len 128 \
     --pred_len 128 \
-    --retrieved_max_length 128 \    
+    --retrieved_max_length 128 \
     --n_docs 10 \
     --save_or_load_index
 ```
 
-### Basic Test for newly created retriever
+## Evaluation
 
+### Quick Qualitative Test
+
+To quickly see if the fine-tuned model behaves differently from the original, you can use the `test_retriever.py` script. This script will show you a side-by-side comparison of the retrieval results for a sample query.
+
+```bash
+python test_retriever.py
 ```
-python3 test_retriever.py
-```
 
-Further testing for the newly trained retriever should be performed using CodeRagBench. The test_retriever.py script above was an experimental script to see if 
-training succeeded but should not be used as a reliable test.
+### Formal Benchmarking
 
-
-
+The `test_retriever.py` script is only for a quick qualitative check. For a rigorous, quantitative evaluation of your new retriever's performance on coding tasks, it is highly recommended to use a formal benchmark like **CodeRagBench**.
