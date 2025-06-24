@@ -25,6 +25,8 @@ First, install all the required Python packages using Conda and create a virtual
 conda env create -f environment.yml
 ```
 
+If Conda doesn't work, Poetry can also be used to download the dependencies from .lock and .toml file, however some of the packages might be outdated.
+
 ### 2. Data Preparation
 
 The LSR process requires two separate, non-overlapping datasets to prevent the model from learning "trivial retrieval" (i.e., just finding the exact source of its query).
