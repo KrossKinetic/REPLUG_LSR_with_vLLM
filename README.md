@@ -1,5 +1,5 @@
-# REPLUG: 
-This includes a modified implementation of **REPLUG: Retrieval-Augmented Black-Box Language Models** to try to get LSR Finetuning to work on retrievers. The main Black Box LLM is built using vLLM to speed up the process and perform on-device inference instead of relying on cost expensive OpenAI server. The code was refactored to work well with code generation related tasks.
+# REPLUG LSR: 
+This includes a modified implementation of **REPLUG: Retrieval-Augmented Black-Box Language Models** to try to get LSR Finetuning to work and finetune retrievers since the original implementation seems to be incomplete. The main Black Box LLM is built using vLLM to speed up the inference process by performing on-device inference instead of relying on cost expensive OpenAI server. The code was refactored to work well with code generation related tasks.
 
 Further tests need to be conducted to see if this modified script yields similar results. Work in progress... This is NOT a final, consumer ready script. It is working as far as I can tell but the code and parameters might have to be updated based on specific use cases and for your system.
 
