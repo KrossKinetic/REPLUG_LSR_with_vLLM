@@ -64,10 +64,10 @@ def load_text_from_local_corpus(file_path):
     print(f"Loading training data from local file: {file_path}")
     text_data = []
     with open(file_path, 'r', encoding='utf-8') as f:
-        reader = csv.reader(f, delimiter='\t')
+        reader = csv.reader(f) # Removed the '/t' delimiter tag
         try:
             header = next(reader) # Skip header
-            text_column_index = header.index('text')
+            text_column_index = header.index('text') 
         except (StopIteration, ValueError):
             # No header or 'text' column not found, assume all text is in the first column
             f.seek(0)

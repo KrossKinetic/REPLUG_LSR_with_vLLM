@@ -5,24 +5,24 @@ Further tests need to be conducted to see if this modified script yields similar
 
 ## LSR finetuning:
 
-### Download Dataset
+### Download Dataset and reformat it
 ```
-wget https://dl.fbaipublicfiles.com/dpr/wikipedia_split/psgs_w100.tsv.gz
-```
-
-### Downsizing it to 50k passages
-```
-python downsample_corpus.py --input_file "psgs_w100.tsv" --output_file "psgs_w100_50k.tsv" --num_passages 50000
+python3 dataset_downloader_formatter.py
 ```
 
 ### Generating Embeddings
 ```
 python generate_passage_embeddings.py \
     --model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
-    --passages "psgs_w100_50k.tsv" \
-    --output_dir "embeddings_50k_miniLM" \
+    --passages "python-github-code.csv" \
+    --output_dir "embeddings" \
     --shard_id 0 \
-    --n_shards 1
+    --num_shards 1
+```
+
+### Running vLLM Server
+```
+vllm serve TinyLlama/TinyLlama-1.1B-Chat-v1.0 --dtype auto --api-key vllm
 ```
 
 ### Running REPLUG LSR 

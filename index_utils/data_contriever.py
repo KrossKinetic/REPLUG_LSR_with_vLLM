@@ -16,9 +16,11 @@ import pickle as pk
 import torch.distributed as dist
 from pathlib import Path
 from index_utils import dist_utils
+import sys
 
 logger = logging.getLogger(__name__)
 
+csv.field_size_limit(sys.maxsize)
 
 def load_data(opt, tokenizer):
     datasets = {}
@@ -245,16 +247,12 @@ def load_passages(path):
     logger.info(f'Loading passages from: {path}')
     passages = []
     with open(path) as fin:
-        if path.endswith('.jsonl'):
-            for k, line in tqdm(enumerate(fin)):
-                ex = json.loads(line)
+        reader = csv.reader(fin) # CHANGE : Only read csv files 
+        for k, row in tqdm(enumerate(reader)):
+            if not row[0] == 'id':
+                ex = {'id': row[0], 'text': row[1]} # Removed redundant title
                 passages.append(ex)
-        else:
-            reader = csv.reader(fin, delimiter='\t')
-            for k, row in tqdm(enumerate(reader)):
-                if not row[0] == 'id':
-                    ex = {'id': row[0], 'title': row[2], 'text': row[1]}
-                    passages.append(ex)
+            
     return passages
 
 

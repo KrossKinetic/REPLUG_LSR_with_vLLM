@@ -14,7 +14,7 @@ from ipdb import set_trace as bp
 import index_utils.slurm
 import index_utils.contriever
 import index_utils.data_contriever
-import index_utils.normalize_text
+
 
 def embed_passages(args, passages, model, tokenizer):
     total = 0
@@ -23,15 +23,10 @@ def embed_passages(args, passages, model, tokenizer):
     with torch.no_grad():
         for k, p in tqdm(enumerate(passages)):
             batch_ids.append(p['id'])
-            if args.no_title or not 'title' in p:
-                text = p['text']
-            else:
-                text = p['title'] + ' ' + p['text']
-            if args.lowercase:
-                text = text.lower()
-            if args.normalize_text:
-                text = index_utils.normalize_text.normalize(text)
-            batch_text.append(text)
+
+            text = p['text'] # simplified the text gathering for generating embeddings, removed ['title'], ['programming'] / ['source'] might be useful
+            
+            batch_text.append(text) # not performing normalization or lowercasing which might upset semantics for programming
 
             if len(batch_text) == args.per_gpu_batch_size or k == len(passages) - 1:
 
@@ -103,9 +98,6 @@ if __name__ == '__main__':
     parser.add_argument('--chunk_size', type=int, default=64, help="Maximum number of words in a chunk")
     parser.add_argument('--model_name_or_path', type=str, help="path to directory containing model weights and config file")
     parser.add_argument('--no_fp16', action='store_true', help="inference in fp32")
-    parser.add_argument('--no_title', action='store_true', help="title not added to the passage body")
-    parser.add_argument('--lowercase', action='store_true', help="lowercase text before encoding")
-    parser.add_argument('--normalize_text', action='store_true', help="lowercase text before encoding")
 
     args = parser.parse_args()
 
