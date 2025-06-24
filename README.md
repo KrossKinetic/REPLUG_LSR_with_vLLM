@@ -1,7 +1,7 @@
 # REPLUG: 
 This includes a modified implementation of **REPLUG: Retrieval-Augmented Black-Box Language Models** to try to get LSR Finetuning to work on retrievers. The main Black Box LLM is built using vLLM to speed up the process and perform on-device inference instead of relying on cost expensive OpenAI server. The code was refactored to work well with code generation related tasks.
 
-Further tests need to be conducted to see if this modified script yields similar results. Work in progress...
+Further tests need to be conducted to see if this modified script yields similar results. Work in progress... This is NOT a final, consumer ready script. It is working as far as I can tell but the code and parameters might have to be updated based on specific use cases and for your system.
 
 ## LSR finetuning:
 
@@ -29,8 +29,8 @@ vllm serve TinyLlama/TinyLlama-1.1B-Chat-v1.0 --dtype auto --api-key vllm
 ```
 python run_replug_lsr.py \
     --model_config_path "local_vllm_config.json" \
-    --passages "psgs_w100_50k.tsv" \
-    --passages_embeddings "embeddings_50k_miniLM" \
+    --passages "python-github-code.csv" \
+    --passages_embeddings "embeddings/passages_00" \
     --output_dir "output_finetuned_retriever" \
     --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
     --projection_size 384 \
@@ -41,6 +41,12 @@ python run_replug_lsr.py \
     --retrieved_max_length 128 \
     --n_docs 10 \
     --save_or_load_index
+```
+
+### Basic Test for newly created retriever
+
+```
+python3 test_retriever.py
 ```
 
 
