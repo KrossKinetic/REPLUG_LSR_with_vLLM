@@ -17,8 +17,8 @@ def main():
     
     # --- Base Arguments (Shared by both retrievers) ---
     base_args = argparse.Namespace(
-        passages="psgs_w100.tsv",
-        passages_embeddings="embeddings_50k_miniLM", 
+        passages="python-github-code.csv",
+        passages_embeddings="embeddings/passages_00", 
         save_or_load_index=True,
         n_docs=5, # Let's just look at the top 5 results
         projection_size=384, # Correct dimension for MiniLM
@@ -32,7 +32,7 @@ def main():
         chunk_size=100,
         no_title=False,
         per_gpu_batch_size=4,
-        # This last one is needed by the retriever init but not used in this script
+        indexing_batch_size=1000000,
         num_gpus=-1 
     )
 
@@ -49,7 +49,8 @@ def main():
     finetuned_retriever = setup_retriever(args_finetuned)
 
     # --- The Test Query ---
-    query = "The game is a tactical role @-@ playing game where players take control"
+    # Pick a query. A good test case is the start of a document from your training set.
+    query = "# Python implementation of a breadth-first search (BFS) algorithm"
     
     print(f"\n\n===== COMPARING RETRIEVAL RESULTS FOR QUERY =====")
     print(f"QUERY: '{query}'\n")
@@ -60,12 +61,10 @@ def main():
 
     # --- Print Results Side-by-Side ---
     print("--- ORIGINAL MODEL RESULTS ---")
-    # FIX: Loop over docs and scores together using zip
     for i, (doc, score) in enumerate(zip(original_docs, original_scores)):
         print(f"{i+1}. (Score: {score:.4f}) {doc['text'][:150]}...")
     
     print("\n--- YOUR FINE-TUNED MODEL RESULTS ---")
-    # FIX: Loop over docs and scores together using zip
     for i, (doc, score) in enumerate(zip(finetuned_docs, finetuned_scores)):
         print(f"{i+1}. (Score: {score:.4f}) {doc['text'][:150]}...")
         
