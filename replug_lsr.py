@@ -1,12 +1,9 @@
 import numpy as np
-import os
-from tqdm import tqdm, trange
+from tqdm import tqdm
 from retriever import Retriever
 from typing import Optional
-
 from openai import OpenAI
 import torch
-import torch.nn as nn
 import transformers
 import utils
 
@@ -29,6 +26,7 @@ class GPT3LM(LM):
 
     def __init__(self, engine, context_len=1024, max_seq_len=2048, verbose=False, batch_size=16, optimizer=None, args=None):
         
+        # Added new
         self.client = OpenAI(
             base_url="http://localhost:8000/v1",
             api_key="vllm"
@@ -44,7 +42,7 @@ class GPT3LM(LM):
         self.args = args
 
         print(f"Loading tokenizer for model: {self.engine}")
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.engine)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.engine) # Load tokenizer for the HuggingFace Modle you are using for vLLM
         
         if self.tokenizer.eos_token_id is not None:
              self.end_of_text_token_id = self.tokenizer.eos_token_id
@@ -139,6 +137,8 @@ class GPT3LM(LM):
         
         try:
             with self.wb.check_valid():
+
+                # Changed to use the client
                 response = self.client.completions.create(
                     model=self.engine,
                     prompt=token_ids,
@@ -148,8 +148,7 @@ class GPT3LM(LM):
                     echo=True,
                 )
             
-            response_logprobs = response.choices[0].logprobs.token_logprobs
-            logprobs_of_pred_tokens = np.array(response_logprobs[pred_start:])
+            logprobs_of_pred_tokens = np.array(response.choices[0].logprobs.token_logprobs[pred_start:])
             positions = np.arange(pred_start - 1, pred_start - 1 + len(pred_tokens))
 
             return {"logprobs": logprobs_of_pred_tokens, "positions": positions}

@@ -55,7 +55,6 @@ def main():
     print(f"QUERY: '{query}'\n")
 
     # --- Perform Retrieval with BOTH models ---
-    # FIX: Correctly unpack the (docs, scores) tuple from the result
     original_docs, original_scores = original_retriever.retrieve_passage([query])[0]
     finetuned_docs, finetuned_scores = finetuned_retriever.retrieve_passage([query])[0]
 

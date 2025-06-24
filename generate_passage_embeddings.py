@@ -7,19 +7,12 @@
 import os
 
 import argparse
-import csv
-import logging
 import pickle
-
-import numpy as np
 import torch
 from tqdm import tqdm
 from ipdb import set_trace as bp
-import transformers
-
 import index_utils.slurm
 import index_utils.contriever
-import index_utils.utils
 import index_utils.data_contriever
 import index_utils.normalize_text
 
