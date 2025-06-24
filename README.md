@@ -27,19 +27,19 @@ vllm serve TinyLlama/TinyLlama-1.1B-Chat-v1.0 --dtype auto --api-key vllm
 
 ### Running REPLUG LSR 
 ```
-python run_replug_lsr.py \
-    --model_config_path "local_vllm_config.json" \
-    --passages "python-github-code.csv" \
-    --passages_embeddings "embeddings/passages_00" \
+python run_replug_lsr.py \ 
+    --model "TinyLlama/TinyLlama-1.1B-Chat-v1.0" \  
+    --passages "python-github-code.csv" \    
+    --passages_embeddings "embeddings/passages_00" \    
     --data "python-github-code-data.csv" \
-    --output_dir "output_finetuned_retriever" \
-    --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
+    --output_dir "output_finetuned_retriever" \    
+    --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \    
     --projection_size 384 \
-    --learning_rate 2e-5 \
-    --per_gpu_batch_size 4 \
+    --learning_rate 2e-5 \  
+    --per_gpu_batch_size 4 \     
     --context_len 128 \
     --pred_len 128 \
-    --retrieved_max_length 128 \
+    --retrieved_max_length 128 \    
     --n_docs 10 \
     --save_or_load_index
 ```
@@ -49,6 +49,9 @@ python run_replug_lsr.py \
 ```
 python3 test_retriever.py
 ```
+
+Further testing for the newly trained retriever should be performed using CodeRagBench. The test_retriever.py script above was an experimental script to see if 
+training succeeded but should not be used as a reliable test.
 
 
 

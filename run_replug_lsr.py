@@ -15,7 +15,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser()
     # Model and Data
-    parser.add_argument('--model_config_path', required=True, help="Path to the model config for the supervisor LM.")
+    parser.add_argument('--model', required=True, help="HuggingFace model for the supervisor LM.")
     parser.add_argument('--output_dir', required=True, help="Directory to save the fine-tuned retriever model.")
     
     # Training
@@ -84,7 +84,7 @@ def main():
     args = parse_args()
     
     # --- Model Initialization ---
-    config = utils.read_json(args.model_config_path)
+    config = {"engine": args.model}
 
     # --- FIX: Pass context_len and max_seq_len during initialization ---
     # This ensures the model object is created with the correct values from the start.
