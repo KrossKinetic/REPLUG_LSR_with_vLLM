@@ -8,6 +8,8 @@ The key modifications include:
 * **Robust Driver Scripts:** New driver scripts were created to handle argument parsing and execute the training and evaluation pipelines correctly.
 * **Code-Focused Baseline:** The entire pipeline has been adapted and debugged to work with code-based datasets, making it suitable for creating RAG baselines for code generation tasks.
 
+Disclaimer: Further testing still needs to be performed to see if the modifications to get LSR to work yield similar results. Use with caution. Feel free to fix / improve things as you see fit.
+
 ## Prerequisites
 
 * A CUDA-enabled GPU is required.
