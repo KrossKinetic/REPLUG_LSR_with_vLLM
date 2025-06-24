@@ -68,10 +68,7 @@ def main(args):
     if not args.no_fp16:
         model = model.half()
 
-    if args.passages == "wikitext":
-        passages = index_utils.data_contriever.process_huggingface_dataset(args.passages, args.chunk_size)
-    else:
-        passages = index_utils.data_contriever.load_passages(args.passages)
+    passages = index_utils.data_contriever.load_passages(args.passages)
 
     shard_size = len(passages) // args.num_shards
     start_idx = args.shard_id * shard_size
