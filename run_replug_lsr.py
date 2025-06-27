@@ -1,6 +1,5 @@
 import argparse
 import torch
-import utils
 import csv
 from tqdm import tqdm
 from pathlib import Path

@@ -78,6 +78,7 @@ class Retriever():
         return embeddings, ids
 
     def embed_queries(self, queries):
+
         # --- FIX: REMOVED torch.no_grad() to allow for backpropagation ---
         embeddings, batch_question = [], []
         for k, q in enumerate(queries):
@@ -98,6 +99,8 @@ class Retriever():
                 batch_question = []
         embeddings = torch.cat(embeddings, dim=0)
         # --- FIX: Return a torch tensor, not a numpy array ---
+        # In the original script, a static list of numbers was being passed... now a graph is also passed because the entire torch tensor is being passed not just
+        # a numpy array.
         return embeddings
 
     def retrieve_passage(self, queries):

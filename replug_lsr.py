@@ -1,7 +1,6 @@
 import numpy as np
 from tqdm import tqdm
 from retriever import Retriever
-from typing import Optional
 from openai import OpenAI
 import torch
 import transformers
