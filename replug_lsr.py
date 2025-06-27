@@ -8,19 +8,13 @@ import transformers
 import utils
 
 class LM:
-    def get_perplexity_data(self, text) -> Optional[dict]:
-        raise NotImplementedError
-
     @classmethod
     def create_from_config(cls, path):
         raise NotImplementedError
 
     def initialize_retriever(self, args):
-        self.args = args
-        if args.do_retrieval:
-            self.retriever = Retriever(args)
-        else:
-            self.retriever = None
+        self.args = args # Removed if-else statement because do_retrieval is always true
+        self.retriever = Retriever(args)
 
 class GPT3LM(LM):
 
@@ -91,11 +85,14 @@ class GPT3LM(LM):
 
         retrieved_list = self.retriever.retrieve_passage([query])
         
+        # Debug Message
         if not retrieved_list or not retrieved_list[0][0]:
             tqdm.write(f"Query: '{query[:80].strip().replace(chr(10), ' ')}...' | Docs found: 0")
             return None
             
         docs, _ = retrieved_list[0]
+
+        # Debug Message
         tqdm.write(f"Query: '{query[:80].strip().replace(chr(10), ' ')}...' | Docs found: {len(docs)}")
 
         plain_docs = [doc["text"] for doc in docs]
@@ -155,9 +152,6 @@ class GPT3LM(LM):
         except Exception as e:
             tqdm.write(f"API call failed: {e}")
             return None
-
-    def get_perplexity_data(self, text) -> Optional[dict]:
-        pass
 
     @classmethod
     def create_from_config(cls, config):

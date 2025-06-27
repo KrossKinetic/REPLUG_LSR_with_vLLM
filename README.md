@@ -84,7 +84,7 @@ python run_replug_lsr.py \
     --re_model_name_or_path "sentence-transformers/all-MiniLM-L6-v2" \
     --projection_size 384 \
     --learning_rate 2e-5 \
-    --per_gpu_batch_size 4 \
+    --per_gpu_batch_size 16 \
     --context_len 128 \
     --pred_len 128 \
     --retrieved_max_length 128 \
