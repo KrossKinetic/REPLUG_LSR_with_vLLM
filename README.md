@@ -91,17 +91,3 @@ python run_replug_lsr.py \
     --n_docs 10 \
     --save_or_load_index
 ```
-
-## Evaluation
-
-### Quick Qualitative Test
-
-To quickly see if the fine-tuned model behaves differently from the original, you can use the `test_retriever.py` script. This script will show you a side-by-side comparison of the retrieval results for a sample query.
-
-```bash
-python test_retriever.py
-```
-
-### Formal Benchmarking
-
-The `test_retriever.py` script is only for a quick qualitative check. For a rigorous, quantitative evaluation of your new retriever's performance on coding tasks, it is highly recommended to use a formal benchmark like **CodeRagBench**.
